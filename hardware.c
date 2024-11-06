@@ -1,36 +1,7 @@
 //#include<hardware.h>
 #include<stdio.h>
 #include<stdbool.h>
-
-void translate(char inst,bool * j,bool * c,bool * D1, bool * D0, bool * sreg, int* scos);
-
-int counter(int s,bool j, bool c, bool carry);
-int main(){
-char x=0b10110101;
-bool j,c,D1,D0,sreg;
-int scos;
-int count;
-bool carry =0;
-translate(x,&j,&c,&D1,&D0,&sreg,&scos);
-printf("%c : %d,%d,%d,%d,%d,%d\n",x,j,c,D1,D0,sreg,scos);
-count=counter(scos,j,c,carry);
-
-count=counter(scos,j,c,carry);
-x=0b10110111;
-translate(x,&j,&c,&D1,&D0,&sreg,&scos);
-carry=1;
-count=counter(scos,j,c,carry);
-count=counter(scos,j,c,carry);
-x=0b0;
-translate(x,&j,&c,&D1,&D0,&sreg,&scos);
-count=counter(scos,j,c,carry);
-while(1){
-count=counter(scos,j,c,carry);
-}
-return 0;
-}
-
-
+#include"hardware.h"
 int mux2_1(int iA,int iB, bool bSel){
 
 	if (bSel==0)
