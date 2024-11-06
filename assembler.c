@@ -1,15 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void printBinary(int n) {
-	for (int i = 7; i >= 0; i--) {
-		int bit = (n >> i) & 1;
-		printf("%d", bit);
-	}
-	printf("\n");
-}
-
-int main() {
+int main(int nums,char *FILENAME[]) {
 	FILE *mystring, *mybinary;
 	mystring = fopen("fibonacci.asm", "r");
 	mybinary = fopen("fibonacci.bin", "wb");
@@ -27,9 +19,9 @@ int main() {
 		fclose(mystring);
 		return 1;
 	}
-	printf("\nFunction\n");
+	printf("Starting Assembler...\nReading file: %s\n",FILENAME[1]);
 	while (fgets(fptr, 100, mystring)) {
-		printf("%d: %s",i+1, fptr);
+
 		if (strcmp(fptr, "RA=RA+RB\n") == 0)
 			bins[i] = 0b00000000;
 		else if (strcmp(fptr, "RB=RA+RB\n") == 0)
@@ -54,22 +46,26 @@ int main() {
 			continue;
 		}
 		i++;
+		printf("Line %d:",i);
+		int y=0;
+		while(fptr[y]!='\n'){
+		printf("%c",fptr[y]);
+		y++;
+		}
+		printf("-> Machine Code:");
+		printf("%.8b",bins[i-1]);
+		printf("\n");
 	}
 	fclose(mystring);
 
 	fwrite(bins, sizeof(unsigned char), i, mybinary);
 	fclose(mybinary);
-
-	printf("\nBinary values\n");
-	for (int j = 0; j < i; j++) {
-		printf("%d: ", j + 1);
-		int n = bins[j];
-		for (int k = 7; k >= 0; k--) {
-			int bits = (bins[j] >> k) & 1;
-			printf("%d", bits);
-		}
-		printf("\n");
-	}
+	char temp[100];
+	strcpy(temp,FILENAME[1]);
+	temp[strlen(temp)-1]='n';
+	temp[strlen(temp)-2]='i';
+	temp[strlen(temp)-3]='b';
+	printf("Successfully generated output file: %s\n",temp);
 
 	return 0;
 }
