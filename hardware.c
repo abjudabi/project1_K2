@@ -52,72 +52,66 @@ void instruction_memory(char inst[],bool * j,bool * c,bool * D1, bool * D0, bool
 	*scos=scosi;
 }
 
-int romFunction(unsigned char mem[100]) {
-int i=0;
+int romFunction(unsigned char mem[15]) {
+	int i=0;
 	FILE *fptr=fopen("fibonacci.bin","rb");
-    if(fptr==NULL) {
-        printf("Could not open the file\n");
-    }
-    fread(mem,1,15,fptr);
-    do{
-    i++;
-    }while(mem[i]==0x0 || mem[i]== 0x10 || mem[i]== 0x4  || mem[i]== 0x14 || mem[i]== 0x20 || (mem[i]&0xf8)==0x8  || (mem[i]&0xf8)==0x18  || (mem[i]&0xf8)==0x70  || (mem[i]&0xf8)==0xb0);                          
-  
-    fclose(fptr);
-return i;
+	if(fptr==NULL) {
+		printf("Could not open the file\n");
+	}
+	fread(mem,1,15,fptr);
+	do{
+		i++;
+	}while(mem[i]==0x0 || mem[i]== 0x10 || mem[i]== 0x4  || mem[i]== 0x14 || mem[i]== 0x20 || (mem[i]&0xf8)==0x8  || (mem[i]&0xf8)==0x18  || (mem[i]&0xf8)==0x70  || (mem[i]&0xf8)==0xb0);                          
+
+	fclose(fptr);
+	return i;
 }
 
-void ALU(int RA, int RB, bool D0, bool S, bool *carry, int *sum) {
-    if (S == 0) {
-        if (D0 == 0) {
-            RA = RA + RB;
-            if (RA > 0b1111) {
-                *carry = 1;
-                *sum = RA & 0b1111;
-            } else {
-                *carry = 0;
-                *sum = RA & 0b1111;
-            }
-        } else {
-            RB = RA + RB;
-            if (RB > 0b1111) {
-                *carry = 1;
-                *sum = RB & 0b1111;
-            } else {
-                *carry = 0;
-                *sum = RB & 0b1111;
-            }
-        }
-    } else {
-        if (D0 == 0) {
-            *carry = 0;
-            RA = RA - RB;
-            *sum = RA & 0b1111;
-        } else {
-            *carry = 0;
-            RB = RA - RB;
-            *sum = RB & 0b1111;
-        }
-    }
+void ALU(int RA, int RB, bool S, bool *carry, int *sum,char inst) {
+	if( inst== 0x0 || inst== 0x10 || inst== 0x4 || inst== 0x14 ){
+		if (S == 0) {
+			if ((RA+RB) > 0b1111) {
+				*carry = 1;
+				*sum = (RA+RB) & 0b1111;
+			} else {
+				*carry = 0;
+				*sum = (RA+RB) & 0b1111;
+			}
+
+			if ((RA+RB) > 0b1111) {
+				*carry = 1;
+				*sum = (RA+RB) & 0b1111;
+			} else {
+				*carry = 0;
+				*sum = (RA+RB) & 0b1111;
+			}
+		}
+		else {
+
+			*carry = 0;
+			*sum = (RA-RB) & 0b1111;
+		}
+
+	}
 }
 
 void decoder(bool D0, bool D1, bool *enRA, bool *enRB, bool *enRO) {
-    int caseValue = (D0 << 1) | D1;
-    switch (caseValue) {
-        case 0:
-            *enRA = 1; *enRB = 0; *enRO = 0;
-            break;
-        case 1:
-            *enRA = 0; *enRB = 1; *enRO = 0;
-            break;
-        case 2:
-            *enRA = 0; *enRB = 0; *enRO = 1;
-            break;
-        case 3:
-            *enRA = 0; *enRB = 0; *enRO = 0;
-            break;
-        default:
-            break;
-    }
+	int caseValue = (D0 << 1) | D1;
+	switch (caseValue) {
+		case 0:
+			*enRA = 1; *enRB = 0; *enRO = 0;
+			break;
+		case 1:
+			*enRA = 0; *enRB = 1; *enRO = 0;
+			break;
+		case 2:
+			*enRA = 0; *enRB = 0; *enRO = 1;
+			break;
+		case 3:
+			*enRA = 0; *enRB = 0; *enRO = 0;
+			break;
+		default:
+			break;
+	}
 }
 
